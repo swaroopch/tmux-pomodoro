@@ -56,20 +56,22 @@ pomodoro_cancel () {
 pomodoro_status () {
     local pomodoro_start_time=$(read_pomodoro_start_time)
     local current_time=$(get_seconds)
-    local difference=$(( ($current_time - $pomodoro_start_time) / 60 ))
+    local difference=$(( ($current_time - $pomodoro_start_time)))
+
+    local remaining= $(( POMODORO_DURATION_MINUTES*60 - $difference ))
 
     if [ $pomodoro_start_time -eq -1 ]
     then
         echo ""
-    elif [ $difference -ge $(( $POMODORO_DURATION_MINUTES + $POMODORO_BREAK_MINUTES )) ]
+    elif [ $difference -ge $(( $POMODORO_DURATION_MINUTES*60 + $POMODORO_BREAK_MINUTES*60 )) ]
     then
         pomodoro_start_time=-1
         echo ""
-    elif [ $difference -ge $POMODORO_DURATION_MINUTES ]
+    elif [ $difference -ge $POMODORO_DURATION_MINUTES*60 ]
     then
         echo "[P:✅] "
     else
-        echo "[P:$(( $POMODORO_DURATION_MINUTES - $difference ))] "
+        printf "Pomodoro Completed: %02d:%02d " $(( difference / 60 )) $(( difference % 60 ))
     fi
 }
 
